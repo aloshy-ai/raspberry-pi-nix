@@ -12,17 +12,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4  # Update to v4
-
-      - name: Setup Nix
-        uses: cachix/install-nix-action@v20
-        with:
-          nix_path: nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            
+        
       - name: Build SD Image
         run: |
-          nix build '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
+          nix build --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
           mkdir -p artifacts
           cp -L /nix/store/*nixos-sd-image-*.img artifacts/
           sha256sum artifacts/*nixos-sd-image-*.img > artifacts/SHA256SUMS

@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Show Runner Logs",
+            "type": "shell",
+            "command": "docker logs -f ${GITHUB_REPO}-runner",
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+} 
+ 

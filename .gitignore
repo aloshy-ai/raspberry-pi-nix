@@ -1,5 +1,6 @@
 # ENV files
 .env*
+!.env.example
 
 # Idea files
 .idea
