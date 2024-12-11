@@ -1,0 +1,36 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build-sd-image:
+    runs-on: [self-hosted, aarch64-linux]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Update to v4
+
+      - name: Setup Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build SD Image
+        run: |
+          nix build '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
+          mkdir -p artifacts
+          cp -L result/sd-image/nixos-sd-image-*.img artifacts/
+          sha256sum artifacts/nixos-sd-image-*.img > artifacts/SHA256SUMS
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4  # Update to v4
+        with:
+          name: sd-image-${{ github.sha }}
+          path: |
+            artifacts/nixos-sd-image-*.img
+            artifacts/SHA256SUMS
