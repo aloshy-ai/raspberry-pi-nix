@@ -24,8 +24,8 @@ jobs:
         run: |
           nix build '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
           mkdir -p artifacts
-          cp -L result/sd-image/nixos-sd-image-*.img artifacts/
-          sha256sum artifacts/nixos-sd-image-*.img > artifacts/SHA256SUMS
+          cp -L /nix/store/*nixos-sd-image-*.img artifacts/
+          sha256sum artifacts/*nixos-sd-image-*.img > artifacts/SHA256SUMS
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4  # Update to v4
