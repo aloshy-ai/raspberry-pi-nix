@@ -1,0 +1,5 @@
+# ENV files
+.env*
+
+# Idea files
+.idea

@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-sd-image:
-    runs-on: [self-hosted, aarch64-linux]
+    runs-on: [self-hosted, arm64-runner]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4  # Update to v4
