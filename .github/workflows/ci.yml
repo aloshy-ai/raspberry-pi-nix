@@ -20,6 +20,10 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
+      - name: Clear Nix Store
+        run:  |
+              sudo rm -rf /nix/store/*
+              
       - name: Build SD Image
         run: |
           nix build '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
