@@ -4,15 +4,69 @@
         {
             "label": "Show Runner Logs",
             "type": "shell",
-            "command": "docker logs -f ${GITHUB_REPO}-runner & docker exec ${GITHUB_REPO}-runner tail -f /actions-runner/_diag/Runner_*.log",
+            "command": "docker logs -f nixos-rpi-builder-container & docker exec nixos-rpi-builder-container tail -f /actions-runner/_diag/Runner_*.log",
             "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cleanup Container",
+            "type": "shell",
+            "command": "docker ps -a --filter name=nixos-rpi-builder* -q | xargs -r docker rm -f",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cleanup Image",
+            "type": "shell",
+            "command": "docker images 'nixos-rpi-builder*' -q | xargs -r docker rmi -f; docker image prune -f",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cleanup Build Artifacts",
+            "type": "shell",
+            "command": "docker run --rm -v ${workspaceFolder}/artifacts:/build/artifacts alpine:3.12 sh -c 'rm -rf /build/artifacts/*'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
             "problemMatcher": []
         },
         {
             "label": "Build Docker Image",
             "type": "shell",
             "command": "docker build -t nixos-rpi-builder .",
-            "group": "build"
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "dependsOn": ["Cleanup Container", "Cleanup Image", "Cleanup Build Artifacts"],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^Successfully built ([a-f0-9]+)$",
+                    "file": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Step \\d+/\\d+",
+                    "endsPattern": "^Successfully (built|tagged)"
+                }
+            }
         }
     ]
 }

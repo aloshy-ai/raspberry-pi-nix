@@ -10,10 +10,4 @@ WORKDIR /build
 COPY . .
 
 # Build command as the default command
-CMD nix build \
-    --option system aarch64-linux \
-    --no-update-lock-file \
-    '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && \
-    mkdir -p artifacts && \
-    cp -L /nix/store/*nixos-sd-image-*.img artifacts/ && \
-    sha256sum artifacts/*nixos-sd-image-*.img > artifacts/SHA256SUMS
+CMD ["sh", "-c", "nix build --option system aarch64-linux --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && mkdir -p artifacts && cp -r -L /nix/store/*nixos-sd-image-*.img artifacts/"]
