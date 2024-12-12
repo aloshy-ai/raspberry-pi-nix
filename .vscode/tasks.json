@@ -7,7 +7,12 @@
             "command": "docker logs -f ${GITHUB_REPO}-runner & docker exec ${GITHUB_REPO}-runner tail -f /actions-runner/_diag/Runner_*.log",
             "isBackground": true,
             "problemMatcher": []
+        },
+        {
+            "label": "Build Docker Image",
+            "type": "shell",
+            "command": "docker build -t nixos-rpi-builder .",
+            "group": "build"
         }
     ]
-} 
- 
+}

@@ -13,6 +13,22 @@
             "envFile": "${workspaceFolder}/.env",
             "console": "internalConsole",
             "postDebugTask": "Show Runner Logs"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Build Image",
+            "runtimeExecutable": "docker",
+            "runtimeArgs": [
+                "run",
+                "--rm",
+                "-v",
+                "${workspaceFolder}/artifacts:/build/artifacts",
+                "nixos-rpi-builder"
+            ],
+            "preLaunchTask": "Build Docker Image",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
         }
     ]
 }

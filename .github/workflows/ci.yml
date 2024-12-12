@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-sd-image:
-    # Use GitHub-hosted runner instead of self-hosted
     runs-on: ubuntu-latest
     
     steps:
@@ -26,18 +25,25 @@ jobs:
           nix_path: nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
           extra_nix_config: |
             experimental-features = nix-command flakes
-            system-features = arm-linux aarch64-linux
-            extra-platforms = aarch64-linux arm-linux
+            system-features = big-parallel kvm nixos-test benchmark
+            extra-platforms = aarch64-linux
       
-      - name: Configure Nix for Cross-compilation
+      - name: Configure Nix
         run: |
-              echo "extra-platforms = aarch64-linux arm-linux" | sudo tee -a /etc/nix/nix.conf
+              sudo mkdir -p /etc/nix
+              cat << EOF | sudo tee /etc/nix/nix.conf
+              experimental-features = nix-command flakes
+              system-features = big-parallel kvm nixos-test benchmark
+              extra-platforms = aarch64-linux
+              EOF
               sudo systemctl restart nix-daemon
       
       - name: Build SD Image
         run: |
               nix build \
                 --option system aarch64-linux \
+                --option extra-system-features "big-parallel" \
+                --option system-features "big-parallel kvm nixos-test benchmark" \
                 --no-update-lock-file \
                 '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
               mkdir -p artifacts
