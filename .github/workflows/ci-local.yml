@@ -1,0 +1,37 @@
+name: CI Build (Local Testing)
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build-sd-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      # Skip QEMU setup for local testing
+      # - name: Setup QEMU
+      #   uses: docker/setup-qemu-action@v3
+      
+      - name: Check Environment
+        run: |
+              uname -a
+              pwd
+              ls -la
+      
+      # Mock build step for testing
+      - name: Mock Build
+        run: |
+              mkdir -p artifacts
+              echo "This is a mock SD image" > artifacts/nixos-sd-image-mock.img
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sd-image-test
+          path: |
+                artifacts/nixos-sd-image-*.img
