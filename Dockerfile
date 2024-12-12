@@ -13,4 +13,4 @@ WORKDIR /build
 COPY . .
 
 # Build command as the default command
-CMD ["sh", "-c", "nix build --option system aarch64-linux --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && mkdir -p artifacts && chown -R $(id -u):$(id -g) artifacts && cp -f -r -L /nix/store/*nixos-sd-image-*.img artifacts/"]
+CMD ["sh", "-c", "nix build --option system aarch64-linux --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && mkdir -p artifacts && chown -R $(id -u):$(id -g) artifacts && cp -f -R -L /nix/store/*nixos-sd-image-* artifacts/"]

@@ -23,8 +23,7 @@ This project provides:
 
 1. Open project in VS Code
 2. Press `F5` to start the build
-   - This will first run the "Build Docker Image" task
-   - Then run the build inside the container
+   - See the live logs in the  terminal
 3. Wait for the build to complete
 4. Find the built image in the `artifacts` directory
 
@@ -84,7 +83,3 @@ Feel free to open issues or submit pull requests for:
 
 This project builds upon:
 - [nix-community/raspberry-pi-nix](https://github.com/nix-community/raspberry-pi-nix) - NixOS modules for Raspberry Pi configuration
-
-## License
-
-[Add your license information here]

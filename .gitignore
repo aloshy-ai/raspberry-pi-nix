@@ -4,3 +4,6 @@
 
 # Idea files
 .idea
+
+# Build artifacts
+artifacts
