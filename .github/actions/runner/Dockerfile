@@ -42,45 +42,28 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && rm -rf /tmp/*
 
-# Install Nix and configure system-wide
-RUN sh <(curl -L https://nixos.org/nix/install) --daemon
-
-# Configure Nix system-wide with flakes enabled
-RUN mkdir -p /etc/nix \
-    && echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
-
-# Add Nix paths according to multi-user installation guidelines
-ENV PATH="/nix/var/nix/profiles/system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH"
-ENV NIX_PATH="nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs:/nix/var/nix/profiles/per-user/root/channels"
-
-# Create necessary directories with proper permissions
-RUN mkdir -p /opt/hostedtoolcache \
-    && mkdir -p /home/ubuntu/runner \
-    && mkdir -p /home/ubuntu/_work
-
 # Setup Python 2 and pip
 RUN curl -s -L -O https://bootstrap.pypa.io/pip/2.7/get-pip.py \
     && python2 get-pip.py \
     && rm get-pip.py
 
-# User setup and permissions
-RUN groupadd ubuntu \
-    && useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1001 ubuntu \
-    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
-    && chown -R ubuntu:ubuntu /home/ubuntu
+RUN mkdir -p /opt/hostedtoolcache
 
-# Copy and setup runner files
-COPY --chown=ubuntu:ubuntu bootstrap entrypoint /home/ubuntu/runner/
-RUN chmod +x /home/ubuntu/runner/bootstrap \
-    && chmod +x /home/ubuntu/runner/entrypoint
+RUN groupadd ubuntu
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1001 ubuntu
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# Switch to non-root user
 USER ubuntu
+RUN mkdir /home/ubuntu/runner
+RUN mkdir /home/ubuntu/_work
 WORKDIR /home/ubuntu/runner
 
-# Run bootstrap after switching user
-RUN /home/ubuntu/runner/bootstrap \
-    && rm /home/ubuntu/runner/bootstrap
+COPY --chown=ubuntu:ubuntu bootstrap entrypoint /home/ubuntu/runner/
+
+RUN sudo chmod +x /home/ubuntu/runner/bootstrap \
+  && sudo chmod +x /home/ubuntu/runner/entrypoint \
+  && /home/ubuntu/runner/bootstrap \
+  && rm /home/ubuntu/runner/bootstrap
 
 ENTRYPOINT ["/home/ubuntu/runner/entrypoint"]
 CMD ["/home/ubuntu/runner/bin/runsvc.sh"]

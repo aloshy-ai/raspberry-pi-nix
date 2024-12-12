@@ -11,7 +11,7 @@
             ],
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/.env",
-            "console": "integratedTerminal",
+            "console": "internalConsole",
             "postDebugTask": "Show Runner Logs"
         }
     ]

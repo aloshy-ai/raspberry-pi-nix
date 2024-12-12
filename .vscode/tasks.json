@@ -4,7 +4,7 @@
         {
             "label": "Show Runner Logs",
             "type": "shell",
-            "command": "docker logs -f ${GITHUB_REPO}-runner",
+            "command": "docker logs -f ${GITHUB_REPO}-runner & docker exec ${GITHUB_REPO}-runner tail -f /actions-runner/_diag/Runner_*.log",
             "isBackground": true,
             "problemMatcher": []
         }

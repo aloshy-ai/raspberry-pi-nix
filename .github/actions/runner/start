@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Script variables
-IMAGE_NAME="wbond/pi-github-runner"
+IMAGE_NAME="aloshy-ai/raspberry-pi4-runner"
 TAG="latest"
 
 # Check if Docker image exists
