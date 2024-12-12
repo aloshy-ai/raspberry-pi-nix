@@ -56,7 +56,7 @@ docker run --rm \
 
 ## Using the Built Image
 
-1. After a successful build, find the image file in the root directory (`nixos-sd-image-aarch64-linux.img`)
+1. After a successful build, find the image file in the `artifacts` directory (`nixos-sd-image-aarch64-linux.img`)
 2. Use Raspberry Pi Imager to flash the image to an SD card or USB drive
 
 ## Troubleshooting
