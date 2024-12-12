@@ -4,12 +4,8 @@ FROM nixos/nix:latest
 RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf && \
     echo "extra-platforms = aarch64-linux arm-linux" >> /etc/nix/nix.conf
 
-# Install and configure sudo
-RUN nix-channel --update && \
-    nix-env -iA nixpkgs.sudo && \
-    mkdir -p /etc/sudoers.d && \
-    echo "root ALL=(ALL:ALL) ALL" > /etc/sudoers && \
-    chmod 440 /etc/sudoers
+# Run as root user
+USER root
 
 WORKDIR /build
 
@@ -17,4 +13,4 @@ WORKDIR /build
 COPY . .
 
 # Build command as the default command
-CMD ["sh", "-c", "nix build --option system aarch64-linux --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && mkdir -p artifacts && sudo cp -r -L /nix/store/*nixos-sd-image-*.img artifacts/"]
+CMD ["sh", "-c", "nix build --option system aarch64-linux --no-update-lock-file '.#nixosConfigurations.rpi-example.config.system.build.sdImage' && mkdir -p artifacts && cp -r -L /nix/store/*nixos-sd-image-*.img artifacts/"]
