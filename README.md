@@ -45,16 +45,18 @@ docker run --rm \
 ```
 .
 ├── .vscode/
-│   ├── launch.json        # VS Code launch configuration
-│   └── tasks.json         # VS Code build tasks
-├── artifacts/            # Build output directory (created during build)
-├── .github/             # GitHub-related configurations
-└── Dockerfile           # Build environment definition
+│   ├── launch.json                  # VS Code launch configuration
+│   └── tasks.json                   # VS Code build tasks
+├── artifacts/                       # Build output directory
+├── .github/                         # GitHub-related configurations
+├── Dockerfile                       # Build environment definition
+└── nixos-sd-image-aarch64-linux.img # Final build image
+
 ```
 
 ## Using the Built Image
 
-1. After a successful build, find the image file in the `artifacts` directory
+1. After a successful build, find the image file in the root directory (`nixos-sd-image-aarch64-linux.img`)
 2. Use Raspberry Pi Imager to flash the image to an SD card or USB drive
 
 ## Troubleshooting
