@@ -1,127 +1,80 @@
 # NixOS Raspberry Pi Image Builder
 
-A GitHub Actions workflow to build custom NixOS images for Raspberry Pi (aarch64), using a self-hosted runner optimized for ARM64 architecture.
+A Docker-based build environment for creating custom NixOS images for Raspberry Pi (aarch64).
 
-This project combines:
-
-- NixOS Raspberry Pi configuration from [nix-community/raspberry-pi-nix](https://github.com/nix-community/raspberry-pi-nix)
-- Self-hosted runner implementation inspired by [wbond/pi-github-runner](https://github.com/wbond/pi-github-runner)
+This project uses the NixOS Raspberry Pi configuration from [nix-community/raspberry-pi-nix](https://github.com/nix-community/raspberry-pi-nix).
 
 ## Overview
 
 This project provides:
-
-- A local GitHub Actions runner for ARM64 builds
-- Automated NixOS image building for Raspberry Pi
-- Docker-based build environment
+- Docker-based build environment for NixOS Raspberry Pi images
+- VS Code integration for easy builds
 - Integration with Raspberry Pi Imager
 
 ## Prerequisites
 
-- Raspberry Pi 4 (or newer) with Docker installed
+- Docker installed
 - Visual Studio Code
-- Git repository connected to GitHub
 - [Raspberry Pi Imager](https://www.raspberrypi.com/software/) for flashing
 
-## Setup Build Environment
-
-1. Copy environment template:
-
-```bash
-cp .env.example .env
-```
-
-2. Configure environment:
-   - Get GitHub token from `https://github.com/settings/tokens`
-   - Required token scopes: `repo`, `workflow`
-   - Edit `.env`:
-
-```env
-GITHUB_ACCESS_TOKEN=your_github_token
-RUNNER_NAME=your-runner-name
-```
-
-## Starting the Build Runner
+## Building NixOS Image
 
 ### Using VS Code (Recommended)
 
 1. Open project in VS Code
-2. Press `F5` to start the runner
+2. Press `F5` to start the build
+   - This will first run the "Build Docker Image" task
+   - Then run the build inside the container
+3. Wait for the build to complete
+4. Find the built image in the `artifacts` directory
 
-### Using Terminal
+### Using Docker Directly
 
 ```bash
-# Load environment and start runner
-source .env && bash .github/actions/runner/start
+# Build the Docker image
+docker build -t nixos-rpi-builder .
+
+# Run the build
+docker run --rm \
+  --name nixos-rpi-builder-container \
+  -v ${PWD}/artifacts:/build/artifacts \
+  nixos-rpi-builder
 ```
-
-## Building NixOS Image
-
-1. The runner will automatically process workflows when triggered
-2. Build artifacts will be available in GitHub Actions
-3. Download the generated image from the workflow artifacts
-4. Use Raspberry Pi Imager to flash the image to SD card/USB
 
 ## Project Structure
 
 ```
 .
-├── .github/actions/runner/   # ARM64 runner configuration
-│   ├── Dockerfile           # Runner container definition
-│   ├── build               # Image build script
-│   ├── start              # Runner start script
-│   ├── bootstrap          # Runner setup script
-│   └── entrypoint        # Container entry point
 ├── .vscode/
-│   └── launch.json        # VS Code launch configuration
-├── .env.example           # Environment template
-└── .env                   # Environment configuration (git-ignored)
+│   ├── launch.json        # VS Code launch configuration
+│   └── tasks.json         # VS Code build tasks
+├── artifacts/            # Build output directory (created during build)
+├── .github/             # GitHub-related configurations
+└── Dockerfile           # Build environment definition
 ```
+
+## Using the Built Image
+
+1. After a successful build, find the image file in the `artifacts` directory
+2. Use Raspberry Pi Imager to flash the image to an SD card or USB drive
 
 ## Troubleshooting
 
 Monitor build progress:
-
 ```bash
-docker logs -f {repository-name}-runner
+docker logs -f nixos-rpi-builder-container
 ```
 
-Restart build runner:
-
+Clean build environment:
 ```bash
-docker restart {repository-name}-runner
+docker rm -f nixos-rpi-builder-container
+docker rmi nixos-rpi-builder
+rm -rf artifacts/*
 ```
-
-## Runner Management
-
-Stop runner:
-
-```bash
-docker stop {repository-name}-runner
-```
-
-Remove runner:
-
-```bash
-docker rm -f {repository-name}-runner
-```
-
-Rebuild runner container:
-
-```bash
-.github/actions/runner/build --no-cache
-```
-
-## Security Notes
-
-- Never commit `.env` file
-- Regularly rotate GitHub token
-- Keep build environment updated
 
 ## Contributing
 
 Feel free to open issues or submit pull requests for:
-
 - Build configuration improvements
 - NixOS configuration options
 - Documentation updates
@@ -130,9 +83,7 @@ Feel free to open issues or submit pull requests for:
 ## Credits
 
 This project builds upon:
-
 - [nix-community/raspberry-pi-nix](https://github.com/nix-community/raspberry-pi-nix) - NixOS modules for Raspberry Pi configuration
-- [wbond/pi-github-runner](https://github.com/wbond/pi-github-runner) - GitHub Actions runner implementation for Raspberry Pi
 
 ## License
 
