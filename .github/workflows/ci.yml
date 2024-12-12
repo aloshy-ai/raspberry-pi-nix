@@ -19,8 +19,8 @@ jobs:
       # Step 2: Setup swap space
       - name: Setup swap space
         run: |
-          # Create a 16GB swap file
-          sudo fallocate -l 16G /swapfile
+          # Create a 24GB swap file
+          sudo fallocate -l 24G /swapfile
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
@@ -54,8 +54,9 @@ jobs:
             --option system-features "big-parallel kvm nixos-test benchmark" \
             --no-update-lock-file \
             '.#nixosConfigurations.rpi-example.config.system.build.sdImage'
-          mkdir -p artifacts
-          sudo cp -r -L /nix/store/*nixos-sd-image-*.img artifacts/
+          sudo mkdir -p artifacts
+          sudo chown -R $USER:$USER artifacts
+          sudo cp -f -r -L /nix/store/*nixos-sd-image-*.img artifacts/
 
       # Step 6: Artifact Upload
       - name: Upload Build Artifact
