@@ -10,15 +10,23 @@
                 "run",
                 "--rm",
                 "--name", "nixos-rpi-builder-container",
-                "-v",
-                "${workspaceFolder}/artifacts:/build/artifacts",
+                "-v", "nix-store:/nix/store",
+                "-v", "nix-cache:/root/.cache/nix",
+                "-v", "${workspaceFolder}:/build",
+                "-v", "${workspaceFolder}/artifacts:/build/artifacts",
                 "nixos-rpi-builder"
             ],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Build Docker Image",
+            "preLaunchTask": "Setup and Build Docker Image",
             "postDebugTask": "Show Runner Logs",
             "console": "integratedTerminal",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopOnEntry": true,
+            "serverReadyAction": {
+                "pattern": "artifacts/.*-nixos-sd-image-.*-aarch64-linux\\.img\\.zst: \\d+ bytes$",
+                "action": "debugWithChrome",
+                "killOnServerStop": true
+            }
         }
     ]
 }

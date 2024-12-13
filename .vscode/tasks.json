@@ -2,10 +2,32 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Create Docker Volumes",
+            "type": "shell",
+            "command": "docker volume create nix-store; docker volume create nix-cache",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Show Runner Logs",
             "type": "shell",
             "command": "docker logs -f nixos-rpi-builder-container & docker exec nixos-rpi-builder-container tail -f /actions-runner/_diag/Runner_*.log",
             "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cleanup Everything (Optional)",
+            "type": "shell",
+            "command": "docker volume rm nix-store nix-cache",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared",
@@ -55,7 +77,6 @@
                 "panel": "shared",
                 "clear": false
             },
-            "dependsOn": ["Cleanup Container", "Cleanup Image", "Cleanup Build Artifacts"],
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^Successfully built ([a-f0-9]+)$",
@@ -67,6 +88,18 @@
                     "endsPattern": "^Successfully (built|tagged)"
                 }
             }
+        },
+        {
+            "label": "Setup and Build Docker Image",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Create Docker Volumes",
+                "Cleanup Container",
+                "Cleanup Image",
+                "Cleanup Build Artifacts",
+                "Build Docker Image"
+            ],
+            "problemMatcher": []
         }
     ]
 }

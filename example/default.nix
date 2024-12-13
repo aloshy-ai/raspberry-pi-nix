@@ -1,12 +1,28 @@
 { pkgs, lib, ... }: {
-  time.timeZone = "America/New_York";
-  users.users.root.initialPassword = "root";
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  time.timeZone = "Asia/Dubai";
+  users = {
+    users = {
+        root = {
+        initialPassword = "root";
+      };
+      aloshy = {
+        isNormalUser = true;
+        extraGroups = [ "wheel" ];
+        initialPassword = "aloshy";
+      };
+    };
+  };
   networking = {
-    hostName = "example";
+    hostName = "ETHERPI";
     useDHCP = false;
     interfaces = {
       wlan0.useDHCP = true;
       eth0.useDHCP = true;
+    };
+    firewall = {
+      allowedTCPPorts = [ 22 ];
+      enable = true;
     };
   };
   raspberry-pi-nix.board = "bcm2711";
@@ -35,10 +51,20 @@
     };
   };
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+  services = {
+    avahi = {
+      enable = true;
+      nssmdns = true;
+    };
+    openssh = {
+      enable = true;
+      permitRootLogin = "yes";
+    };
+    pipewire = {
+       enable = true;
+       alsa.enable = true;
+       alsa.support32Bit = true;
+       pulse.enable = true;
+     };
   };
 }
