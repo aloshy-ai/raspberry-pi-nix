@@ -11,3 +11,4 @@ artifacts
 # Build image
 *.img
 result
+.direnv

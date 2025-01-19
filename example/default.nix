@@ -6,11 +6,6 @@
         root = {
         initialPassword = "root";
       };
-      aloshy = {
-        isNormalUser = true;
-        extraGroups = [ "wheel" ];
-        initialPassword = "aloshy";
-      };
     };
   };
   networking = {

@@ -34,10 +34,7 @@ This project provides:
 docker build -t nixos-rpi-builder .
 
 # Run the build
-docker run --rm \
-  --name nixos-rpi-builder-container \
-  -v ${PWD}/artifacts:/build/artifacts \
-  nixos-rpi-builder
+docker run --rm --name nixos-builder-container -v ${PWD}/artifacts:/build/artifacts nixos-builder
 ```
 
 ## Project Structure
